@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Consumption Analysis</title>
+</head>
+<body>
+    <h1>Energy Consumption and Operational Costs Over Time</h1>
+
+    <!-- Display the Line Chart -->
+    <div>
+        <h2>Energy Consumption and Operational Costs</h2>
+        {% if graph_html %}
+            {{ graph_html | safe }}
+        {% else %}
+            <p>No data available for energy consumption analysis.</p>
+        {% endif %}
+    </div>
+
+    <!-- Display the Pie Chart -->
+    <div>
+        <h2>Monthly Energy Consumption Distribution</h2>
+        {% if pie_chart_html %}
+            {{ pie_chart_html | safe }}
+        {% else %}
+            <p>No data available for energy consumption distribution.</p>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('index') }}">Back to Home</a>
+</body>
+</html>

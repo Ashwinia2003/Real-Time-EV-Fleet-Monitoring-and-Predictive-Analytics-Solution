@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Status</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        table th {
+            background: #2196f3;
+            color: #fff;
+        }
+        table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .table-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <h2>Real-Time Vehicle Status</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Vehicle ID</th>
+                    <th>Speed (km/h)</th>
+                    <th>Battery Status</th>
+                    <th>Location</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody id="vehicle-status">
+                <!-- Dynamic content will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchVehicleStatus() {
+            try {
+                const response = await fetch('vehicle_status');
+                if (!response.ok) {
+                    throw new Error("Failed to fetch vehicle data");
+                }
+    
+                const vehicles = await response.json();
+                const tableBody = document.getElementById('vehicle-status');
+                tableBody.innerHTML = ''; // Clear existing data
+    
+                // Check if vehicles data is returned
+                if (vehicles && vehicles.length) {
+                    vehicles.forEach(vehicle => {
+                        const row = `
+                            <tr>
+                                <td>${vehicle.vehicle_id}</td>
+                                <td>${vehicle.speed}</td>
+                                <td>${vehicle.battery_status}</td>
+                                <td>${vehicle.latitude}, ${vehicle.longitude}</td>
+                                <td>${new Date(vehicle.last_updated).toLocaleString()}</td>
+                            </tr>
+                        `;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="5">No vehicle data available</td></tr>';
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    
+        // Fetch data every 5 seconds
+        setInterval(fetchVehicleStatus, 5000);
+    
+        // Initial fetch
+        fetchVehicleStatus();
+    </script>
+</body>
+</html>
+{% endblock %}

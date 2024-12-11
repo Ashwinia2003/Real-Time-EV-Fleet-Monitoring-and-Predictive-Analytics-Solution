@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Route Optimization</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">EV Route Optimization</h1>
+        <p class="text-center">Plan your journey with optimized charging stops!</p>
+
+        <!-- Form for input -->
+        <form method="POST" class="mt-4">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="source" class="form-label">Source City</label>
+                    <select name="source" id="source" class="form-select" required>
+                        <option value="">Select Source City</option>
+                        {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="destination" class="form-label">Destination City</label>
+                    <select name="destination" id="destination" class="form-select" required>
+                        <option value="">Select Destination City</option>
+                        {% for city in cities %}
+                        <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="max_range" class="form-label">Max Range (in km)</label>
+                    <input type="number" name="max_range" id="max_range" class="form-control" placeholder="Enter max range of your EV" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="remaining_charge" class="form-label">Remaining Battery (%)</label>
+                    <input type="number" name="remaining_charge" id="remaining_charge" class="form-control" placeholder="Enter remaining battery percentage" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Find Optimized Route</button>
+        </form>
+
+        <!-- Display Results -->
+        {% if route %}
+        <div class="mt-5">
+            <h2>Optimized Route</h2>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <strong>Starting Point:</strong> {{ source }}
+                </li>
+                {% for stop in route %}
+                <li class="list-group-item">
+                    {% if stop.station_id == destination %}
+                    <strong>Destination:</strong> {{ stop.station_id }}
+                    {% else %}
+                    <strong>Station ID:</strong> {{ stop.station_id }}
+                    {% endif %}
+                    <br>
+                    <strong>Coordinates:</strong> {{ stop.station_coords }}
+                    <br>
+                    <strong>Distance from previous:</strong> {{ stop.distance_from_previous }} km
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert alert-danger mt-4" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="mt-5 text-center">
+        <a href="{{ url_for('index') }}">Back to Dashboard</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
